@@ -1,14 +1,36 @@
 # EmailPro
 AI based email application to make accessing and using email services easy
 
+## Key Technical Aspects
+1. RAG pipline with custom chatbot
+2. Full text search
+3. Full email client clone (Syncing email, sending & receiving. composing etc)
+4. AI smart compose (Email writing copilot)
+5. Command K command bar
+6. Stripe payment setup (SaaS Subscription service)
+
+## Key Technical Aspects
+1. Understand email client functionality with Aurinko
+2. Set up NextJS, ShadCN, Clerk and Database
+3. Prepare Aurinko API to receive and sync emails
+4. Also do database engineering & webhook management
+5. Hook up full text search with Orama
+6. Hook up initial UI to display emails & threads
+7. Search UI
+8. Rag pipeline QnA with Vercel AI SDK
+9. Replies and Composing with Copilot
+10. String setup
+11. Deploy to Vercel
+12. Landing page
+
 # Orama 
 https://github.com/oramasearch/orama
 Provide full text search + chat funcitonalities for project.
 
 # Aurinko
-https://docs.aurinko.io/
-To integrate email, calendar, contacts, tasks painlessly in the project.
-The Aurinko unified mailbox API allows developers to quickly build integrations with many mailbox providers and services like Google, Office 365, Outlook.com, MS Exchange.
+```https://docs.aurinko.io/```
+- Used to sync, integrate email, calendar, contacts, tasks painlessly in the project with the help of a centralized API.
+- The Aurinko unified mailbox API allows developers to quickly build integrations with many mailbox providers and services like Google, Office 365, Outlook.com, MS Exchange.
 
 # Flow of connection:
 - Step 1: Grant access to aurinko
