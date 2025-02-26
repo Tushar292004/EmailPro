@@ -31,3 +31,6 @@ Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/ver
 
 # Databse Commands
 ```npx prisma db push```
+```npx tsx src/playground.ts```
+```npx prisma studio```
+``` npx untun@latest tunnel http://localhost:3000```
