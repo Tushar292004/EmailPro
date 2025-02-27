@@ -17,28 +17,33 @@ export const getAurinkoAuthUrl = async (serviceType: 'Google' | 'Office365') => 
     return `https://api.aurinko.io/v1/auth/authorize?${params.toString()}`
 }
 
-export const exchangeCodeForAccessToken = async (code: string) => {
+export const getAurinkoToken = async (code: string) => {
     try {
-        const response = await axios.post('https://api.aurinko.io/v1/account', {}, {
-            auth: {
-                username: process.env.AURINKO_CLIENT_ID as string,
-                password: process.env.AURINKO_CLIENT_SECRET as string,
+        const response = await axios.post(`https://api.aurinko.io/v1/auth/token/${code}`,
+            {},
+            {
+                auth: {
+                    username: process.env.AURINKO_CLIENT_ID as string,
+                    password: process.env.AURINKO_CLIENT_SECRET as string,
+                }
             }
-        })
+        );
 
-        return response.data as { 
+        return response.data as {
             accountId: number,
             accessToken: string,
             userId: string,
-            userSession: string,
+            userSession: string
         }
     } catch (error) {
-        if (axios.isAxiosError(error)){
-            console.error(error.response?.data)
+        if (axios.isAxiosError(error)) {
+            console.error('Error fetching Aurinko token:', error.response?.data);
+        } else {
+            console.error('Unexpected error fetching Aurinko token:', error);
         }
-        console.log(error)
     }
 }
+
 
 export const getAccountDetails = async (accessToken: string) => {
     try {
