@@ -5,7 +5,6 @@ import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 import { waitUntil } from "@vercel/functions";
 import axios from "axios";
-import { error } from "console";
 
 export const GET = async (req: NextRequest) => {
     const { userId } = await auth()
@@ -43,22 +42,45 @@ export const GET = async (req: NextRequest) => {
             return NextResponse.json({ message: "Failed to fetch account details" }, { status: 400 });
         }
         
-        // Store the account in your database
+        // First, check if the user exists in our database
+        let user = await db.user.findUnique({
+            where: { id: userId }
+        });
+        
+        // If user doesn't exist in our database, create it
+        // This assumes you have the user's email from Clerk or another source
+        if (!user) {
+            // You'll need to fetch user details from Clerk or wherever you have them
+            // This is a placeholder - replace with actual user details retrieval
+            user = await db.user.create({
+                data: {
+                    id: userId,
+                    emailAddress: accountDetails.email, // Using email from Aurinko as a fallback
+                    firstName: accountDetails.name.split(' ')[0] || 'User',
+                    lastName: accountDetails.name.split(' ')[1] || ''
+                }
+            });
+        }
+        
+        // Now create or update the account
         await db.account.upsert({
             where: {
                 id: token.accountId.toString()
             },
             update: {
-                accessToken: token.accessToken
+                accessToken: token.accessToken,
+                emailAddress: accountDetails.email,
+                name: accountDetails.name
             },
             create: {
                 id: token.accountId.toString(),
-                userId,
+                userId: user.id,
                 emailAddress: accountDetails.email,
                 name: accountDetails.name,
                 accessToken: token.accessToken,
             }
-        })
+        });
+        
         
         //trigger initial sync endpoint
         waitUntil(
@@ -70,14 +92,6 @@ export const GET = async (req: NextRequest) => {
                 console.error('Failed to trigger initial sync', error);
             })
         )
-        // waitUntil(
-
-        //     axios.post(`${process.env.NEXT_PUBLIC_URL}/api/initial-sync`, { accountId: token.accountId.toString(), userId }).then((res) => {
-        //         console.log(res.data)
-        //     }).catch((err) => {
-        //         console.log(err.response.data)
-        //     })
-        // )
 
         // Redirect to your mail page
         return NextResponse.redirect(new URL('/mail', req.url))

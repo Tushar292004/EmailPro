@@ -1,4 +1,5 @@
 import { Account } from "@/lib/account";
+import { syncEmailsToDatabase } from "@/lib/sync-to-db";
 import { db } from "@/server/db";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -22,7 +23,7 @@ export const POST = async (req: NextRequest) => {
     if(!dbAccount) return NextResponse.json({error: "Account Not Found"}, {status: 404})
     
     const account = new Account(dbAccount.accessToken)
-    
+
     // perform initial-sync
     const response = await account.performInitialSync()
     if(!response){
@@ -30,18 +31,18 @@ export const POST = async (req: NextRequest) => {
     }
 
     const {emails, deltaToken} = response
-    console.log('emails', emails);
+    // console.log('emails', emails);
     
-    // await db.account.update({
-    //     where:{
-    //         id: accountId
-    //     },
-    //     data: {
-    //         nextDeltaToken: deltaToken
-    //     }
-    // })
+    await db.account.update({
+        where:{
+            id: accountId
+        },
+        data: {
+            nextDeltaToken: deltaToken
+        }
+    })
 
-    // await syncEmailsToDatabase(emails)
+    await syncEmailsToDatabase(emails, accountId)
 
     console.log('Initial Sync Completed', deltaToken);
     
