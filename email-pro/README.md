@@ -34,3 +34,4 @@ Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/ver
 ```npx tsx src/playground.ts```
 ```npx prisma studio```
 ``` npx untun@latest tunnel http://localhost:3000```
+```npm install @vercel/functions```  Helps us to keep running asynchronous code while directly returing the response from end .
