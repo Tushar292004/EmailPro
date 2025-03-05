@@ -26,9 +26,10 @@ import { auth } from "@clerk/nextjs/server";
  * @see https://trpc.io/docs/server/context
  */
 export const createTRPCContext = async (opts: { headers: Headers }) => {
-  const user = await auth()
+  const authData = await auth();
   return {
     db,
+    auth: authData,
     ...opts,
   };
 };
@@ -98,18 +99,19 @@ const timingMiddleware = t.middleware(async ({ next, path }) => {
   return result;
 });
 
-
-const isAuth = t.middleware(([next, ctx]) => {
+const isAuth = t.middleware(({ next, ctx }) => {
   if (!ctx.auth?.userId){
     throw new Error('Unauthorized')
   }
   return next({
     ctx:{
       ...ctx,
-      auth
+      auth: ctx.auth as Required <typeof ctx.auth>
     }
-  })
+  }) 
 })
+
+
 
 /**
  * Public (unauthenticated) procedure
@@ -119,3 +121,6 @@ const isAuth = t.middleware(([next, ctx]) => {
  * are logged in.
  */
 export const publicProcedure = t.procedure.use(timingMiddleware);
+export const privateProcedure = publicProcedure.use(isAuth)
+
+
