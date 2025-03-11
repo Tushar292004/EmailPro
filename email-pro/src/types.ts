@@ -72,3 +72,24 @@ export interface EmailHeader {
     name: string;
     value: string;
 }
+
+// # When adding additional environment variables, the schema in "/src/env.js"
+// # should be updated accordingly.
+
+// # Prisma
+// # https://www.prisma.io/docs/reference/database-reference/connection-urls#env
+// DATABASE_URL='postgresql://neondb_owner:npg_BX3RdM8HzYwW@ep-black-moon-a8u565y4-pooler.eastus2.azure.neon.tech/EmailPro?sslmode=require'
+// NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_ZGVzaXJlZC1oYWdmaXNoLTYuY2xlcmsuYWNjb3VudHMuZGV2JA
+// CLERK_SECRET_KEY=sk_test_Wk7rWFtXkKtOKBLxYExF0c8XwaPKPZDA2fLRdoX4MX
+
+// NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
+// NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
+
+// AURINKO_CLIENT_ID = '8fc44144ce8c2dff074b7ce19f563ec7'
+// AURINKO_CLIENT_SECRET = 'bdUHu3bEnIMIWf0B2Id4ULKW7cqjeBCziq222wof7g0K_ZgTKCI3zDbt1NVi0i_MS5_othStAR2Yplu4uBdOgQ'
+// AURINKO_SIGNING_SECRET = '5b8241fa52f7dc53befda277493b6043c3ba229f46382e07940c72a3f9f1cb9b'
+// API_BASE_URL='https://api.aurinko.io/v1'
+
+// NEXT_PUBLIC_URL='http://localhost:3000'
+
+// OPENAI_API_KEY='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'
