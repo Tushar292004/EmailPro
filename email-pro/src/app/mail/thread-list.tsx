@@ -2,16 +2,15 @@
 import useThreads from '@/hooks/use-threads'
 import React, { ComponentProps } from 'react'
 import { format, formatDistanceToNow } from 'date-fns'
-import { map } from 'zod'
 import { cn } from '@/lib/utils'
 import DOMPurify from 'dompurify'
 import { Badge } from "@/components/ui/badge"
 
 
 const ThreadList = () => {
-    const { threads } = useThreads()
+    const { threads, threadId, setThreadId } = useThreads()
 
-    const groupedThreads = threads?.reduce((acc, thread) => {
+    const groupedThreads = threads?.reduce((acc: any, thread: any) => {
         const date = format(thread.emails[0]?.sentAt ?? new Date(), 'yyyy-MM-dd')
         if (!acc[date]) {
             acc[date] = []
@@ -30,9 +29,11 @@ const ThreadList = () => {
                         <div className='text-xs font-medium text-muted-foreground mt-5 first:mt-0'>
                             {date}
                         </div>
-                        {threads.map(thread => {
-                            return <button key={thread.id} className={
-                                cn('flex items-col  items-start gap-2 rounded-lg border p-3 text-left text-sm translate-all relative', )
+                        {threads.map((thread: any) => {
+                            return <button onClick={()=> setThreadId(thread.id)} key={thread.id} className={
+                                cn('flex items-col  items-start gap-2 rounded-lg border p-3 text-left text-sm translate-all relative', {
+                                    'bg-accent' : thread.id === threadId
+                                } )
                             }>
                                 <div className='flex flex-col w-full gap-2'>
                                     <div className='flex items-center'>
@@ -65,7 +66,7 @@ const ThreadList = () => {
                                 </div>
                                 {thread.emails[0]?.sysLabels.length && (
                                     <div className='flex items-center gap-2'>
-                                        {thread.emails[0]?.sysLabels.map(label => {
+                                        {thread.emails[0]?.sysLabels.map((label: any )=> {
                                             return <Badge key={label} variant={getBadgeVariantFrontLabel(label)}>
                                                 {label}
 

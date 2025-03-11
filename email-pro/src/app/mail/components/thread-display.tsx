@@ -55,7 +55,7 @@ export function ThreadDisplay() {
   const [threadId, setThreadId] = useThread()
   const { threads, isFetching } = useThreads()
   const today = new Date()
-  const _thread = threads?.find(t => t.id === threadId)
+  const _thread = threads?.find((t: any )=> t.id === threadId)
   const [isSearching, setIsSearching] = useAtom(isSearchingAtom)
 
   const [accountId] = useLocalStorage('accountId', '')
@@ -213,7 +213,7 @@ export function ThreadDisplay() {
                   <AvatarImage alt={'lol'} />
                   <AvatarFallback>
                     {thread?.emails[0]?.from?.name?.split(" ")
-                      .map((chunk) => chunk[0])
+                      .map((chunk: any) => chunk[0])
                       .join("")}
                   </AvatarFallback>
                 </Avatar>
@@ -234,7 +234,7 @@ export function ThreadDisplay() {
             <Separator />
             <div className="max-h-[calc(100vh-500px)] overflow-scroll flex flex-col">
               <div className="p-6 flex flex-col gap-4">
-                {thread.emails.map(email => {
+                {thread.emails.map((email: any) => {
                   return <EmailDisplay key={email.id} email={email} />
                 })}
               </div>

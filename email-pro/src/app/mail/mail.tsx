@@ -11,6 +11,7 @@ import { TabsContent } from '@radix-ui/react-tabs';
 import AccountSwitcher   from './account-switcher';
 import { Sidebar } from 'lucide-react';
 import { ThreadList } from './components/thread-list';
+import { ThreadDisplay } from './components/thread-display';
 
 type Props = {
     defaultLayout: number[] | undefined
@@ -81,7 +82,7 @@ type Props = {
             </ResizablePanel>
             <ResizableHandle withHandle />
             <ResizablePanel defaultSize={defaultLayout[2]} minSize={30}>
-                thread display
+                <ThreadDisplay />
             </ResizablePanel>
         </ResizablePanelGroup>
 

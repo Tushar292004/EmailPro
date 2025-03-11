@@ -122,9 +122,9 @@ const EmailEditor = ({ toValues, ccValues, subject, setSubject, to, handleSend, 
             <div ref={ref} className="p-4 pb-0 space-y-2">
                 {expanded && (
                     <>
-                        <TagInput suggestions={suggestions?.map(s => s.address) || []} value={toValues} placeholder="Add tags" label="To" onChange={onToChange} />
-                        <TagInput suggestions={suggestions?.map(s => s.address) || []} value={ccValues} placeholder="Add tags" label="Cc" onChange={onCcChange} />
-                        <Input id="subject" className="w-full" placeholder="Subject" value={subject} onChange={e => setSubject(e.target.value)} />
+                        <TagInput suggestions={suggestions?.map((s: any )=> s.address) || []} value={toValues} placeholder="Add tags" label="To" onChange={onToChange} />
+                        <TagInput suggestions={suggestions?.map((s: any )=> s.address) || []} value={ccValues} placeholder="Add tags" label="Cc" onChange={onCcChange} />
+                        <Input id="subject" className="w-full" placeholder="Subject" value={subject} onChange={(e: any) => setSubject(e.target.value)} />
                     </>
                 )}
                 <div className="flex items-center gap-2">

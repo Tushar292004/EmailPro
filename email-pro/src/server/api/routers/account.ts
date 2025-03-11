@@ -101,6 +101,19 @@ export const accountRouter = createTRPCRouter({
 
     }),
 
+    getSuggestions: privateProcedure.input(z.object({
+        accountId: z.string(),})).query(async ({ ctx, input }) => {
+        const account = await authriseAccountAccesss(input.accountId, ctx.auth.userId)
+        return await ctx.db.email.findMany({
+            where: {
+                accountId: account.id
+            },
+            select: {
+                address: true,
+                name: true
+            }
+        })
+        })
     
 
 })

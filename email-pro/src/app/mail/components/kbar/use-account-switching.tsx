@@ -4,7 +4,7 @@ import React from 'react'
 import { useLocalStorage } from 'usehooks-ts'
 
 const useAccountSwitching = () => {
-    const { data: accounts } = api.mail.getAccounts.useQuery()
+    const { data: accounts } = api.account.getAccounts.useQuery()
 
     // Create some fake data for demonstration purposes
     const mainAction = [{
