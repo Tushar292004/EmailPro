@@ -6,7 +6,7 @@ import { Filter } from "lucide-react";
 import { Prisma } from ".prisma/client/default.js";
 import { db } from "@/server/db";
 
-export const authriseAccountAccesss = async(AccountId: string, userId: string) => {
+export const authriseAccountAccesss = async (AccountId: string, userId: string) => {
     const account = await db.account.findFirst({
         where: {
             id: AccountId,
@@ -14,9 +14,9 @@ export const authriseAccountAccesss = async(AccountId: string, userId: string) =
         }, select: {
             id: true, emailAddress: true, name: true
         }
-    })  
+    })
     if (!account) throw new Error("Account not found")
-    return account 
+    return account
 
 }
 export const accountRouter = createTRPCRouter({
@@ -96,15 +96,16 @@ export const accountRouter = createTRPCRouter({
             take: 15,
             orderBy: {
                 lastMessageDate: 'desc'
-            } 
+            }
         })
 
     }),
 
     getSuggestions: privateProcedure.input(z.object({
-        accountId: z.string(),})).query(async ({ ctx, input }) => {
+        accountId: z.string(),
+    })).query(async ({ ctx, input }) => {
         const account = await authriseAccountAccesss(input.accountId, ctx.auth.userId)
-        return await ctx.db.email.findMany({
+        return await ctx.db.emailAddress.findMany({
             where: {
                 accountId: account.id
             },
@@ -113,7 +114,7 @@ export const accountRouter = createTRPCRouter({
                 name: true
             }
         })
-        })
-    
+    })
+
 
 })
