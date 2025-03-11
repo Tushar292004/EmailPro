@@ -1,6 +1,4 @@
 'use server';
-import TurndownService from 'turndown'
-
 import { streamText } from 'ai';
 import { openai } from '@ai-sdk/openai';
 import { createStreamableValue } from 'ai/rsc';

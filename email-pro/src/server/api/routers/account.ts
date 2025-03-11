@@ -5,8 +5,10 @@ import { EmailAddress } from "@clerk/nextjs/server";
 import { Filter } from "lucide-react";
 import { Prisma } from ".prisma/client/default.js";
 import { db } from "@/server/db";
+import { threadId } from "worker_threads";
+import { emailAddressSchema } from "@/types";
 
-export const authriseAccountAccesss = async (AccountId: string, userId: string) => {
+export const authoriseAccountAccesss = async (AccountId: string, userId: string) => {
     const account = await db.account.findFirst({
         where: {
             id: AccountId,
@@ -34,7 +36,7 @@ export const accountRouter = createTRPCRouter({
         accountId: z.string(),
         tab: z.string()
     })).query(async ({ ctx, input }) => {
-        const account = await authriseAccountAccesss(input.accountId, ctx.auth.userId)
+        const account = await authoriseAccountAccesss(input.accountId, ctx.auth.userId)
 
         let filter: Prisma.ThreadWhereInput = {};
 
@@ -59,7 +61,7 @@ export const accountRouter = createTRPCRouter({
         done: z.boolean()
 
     })).query(async ({ ctx, input }) => {
-        const account = await authriseAccountAccesss(input.accountId, ctx.auth.userId)
+        const account = await authoriseAccountAccesss(input.accountId, ctx.auth.userId)
 
         let filter: Prisma.ThreadWhereInput = {};
 
@@ -104,7 +106,7 @@ export const accountRouter = createTRPCRouter({
     getSuggestions: privateProcedure.input(z.object({
         accountId: z.string(),
     })).query(async ({ ctx, input }) => {
-        const account = await authriseAccountAccesss(input.accountId, ctx.auth.userId)
+        const account = await authoriseAccountAccesss(input.accountId, ctx.auth.userId)
         return await ctx.db.emailAddress.findMany({
             where: {
                 accountId: account.id
@@ -114,7 +116,77 @@ export const accountRouter = createTRPCRouter({
                 name: true
             }
         })
-    })
+    }),
 
+    getReplyDetails: privateProcedure.input(z.object({
+        accountId: z.string(),
+        threadId: z.string(),
+    })).query(async ({ ctx, input }) => {
+        const account = await authoriseAccountAccesss(input.accountId, ctx.auth.userId)
+        const thread = await ctx.db.thread.findUnique({
+            where: {
+                id: input.threadId,
+            },
+            include: {
+                emails: {
+                    orderBy: { sentAt: "asc" },
+                    select: {
+                        from: true,
+                        to: true,
+                        cc: true,
+                        bcc: true,
+                        sentAt: true, subject: true,
+                        internetMessageId: true
+                    }
+                }
+            }
+        })
+        if (!thread || thread.emails.length === 0) {
+            throw new Error("Thread not found or empty");
+        }
+
+        const lastExternalEmail = thread.emails
+            .reverse()
+            .find(email => email.from.id !== account.id);
+
+        if (!lastExternalEmail) {
+            throw new Error("No external email found in thread");
+        }
+
+        return {
+            subject: lastExternalEmail.subject,
+            to: [lastExternalEmail?.from, ...lastExternalEmail.to.filter(to => to.address !== account.emailAddress)],
+            cc: lastExternalEmail.cc.filter(cc => cc.address !== account.emailAddress),
+            from: { name: account.name, address: account.emailAddress },
+            id: lastExternalEmail.internetMessageId
+        }
+    }),
+    sendEmail: privateProcedure.input(z.object({
+        accountId: z.string(),
+        body: z.string(),
+        subject: z.string(),
+        from: emailAddressSchema,
+        to: z.array(emailAddressSchema),
+        cc: z.array(emailAddressSchema).optional(),
+        bcc: z.array(emailAddressSchema).optional(),
+        replyTo: emailAddressSchema,
+        inReplyTo: z.string().optional(),
+        threadId: z.string().optional(),
+    })).mutation(async ({ ctx, input }) => {
+        const acc = await authoriseAccountAccesss(input.accountId, ctx.auth.userId)
+        const account = new Account(acc.accessToken)
+        console.log('sendmail', input)
+        await account.sendEmail({
+            body: input.body,
+            subject: input.subject,
+            threadId: input.threadId,
+            to: input.to,
+            bcc: input.bcc,
+            cc: input.cc,
+            replyTo: input.replyTo,
+            from: input.from,
+            inReplyTo: input.inReplyTo,
+        })
+    })
 
 })

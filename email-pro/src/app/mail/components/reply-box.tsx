@@ -10,16 +10,16 @@ const ReplyBox = () => {
 
     const [threadId] = useThread()
     const { accountId } = useThreads()
-    const { data: replyDetails } = api.mail.getReplyDetails.useQuery({
+    const { data: replyDetails } = api.account.getReplyDetails.useQuery({
         accountId: accountId,
         threadId: threadId || '',
-        replyType: 'reply'
+        // replyType: 'reply'
     })
     if (!replyDetails) return <></>;
     return <Component replyDetails={replyDetails} />
 }
 
-const Component = ({ replyDetails }: { replyDetails: NonNullable<RouterOutputs['mail']['getReplyDetails']> }) => {
+const Component = ({ replyDetails }: { replyDetails: NonNullable<RouterOutputs['account']['getReplyDetails']> }) => {
     const [threadId] = useThread()
     const { accountId } = useThreads()
 
@@ -28,7 +28,7 @@ const Component = ({ replyDetails }: { replyDetails: NonNullable<RouterOutputs['
     const [toValues, setToValues] = React.useState<{ label: string, value: string }[]>(replyDetails.to.map(to => ({ label: to.address ?? to.name, value: to.address })) || [])
     const [ccValues, setCcValues] = React.useState<{ label: string, value: string }[]>(replyDetails.cc.map(cc => ({ label: cc.address ?? cc.name, value: cc.address })) || [])
 
-    const sendEmail = api.mail.sendEmail.useMutation()
+    const sendEmail = api.account.sendEmail.useMutation()
     React.useEffect(() => {
         if (!replyDetails || !threadId) return;
 
